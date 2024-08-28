@@ -11,5 +11,5 @@ This is the set of instructions for Zimbra team members to download, edit and pu
 5. When done saving your work perform the following CLI commands from within the local repo: 
     a. `git add -all` to add all edited files associated with the repo. If you wish to ignore any files just add the name to the .ignore file. 
     b. `git commit -m "TYPE REASON FOR UPDATE"` write one sentance that describes the change. 
-    c. `git push` Check the site for to ensure the updates took. 
+    c. `git push` Check the site to ensure the updates took. eg. `git commit -m "updating typo in readme.md"`
 
