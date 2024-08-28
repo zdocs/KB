@@ -2,18 +2,7 @@
 title: Zimbra Knowledge Base
 title-block-banner: media/zimbra-logo-color.png
 author: zimbra sales engineering 
-toc: false
-toc-depth: 3
-number-sections: false
-toc-location: right-body
 abstract: This repository contains a collection of administrative, support, and best practice documention to help partners find the right information.
-format:
-  html:
-    page-layout: full
-    code-links:
-      - text: Data Import Code
-        icon: file-code
-        href: data-import.py
 ---
 
 ## Table of Contents
