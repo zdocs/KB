@@ -1,7 +1,7 @@
 ---
 title: Zimbra Knowledge Base
 title-block-banner: media/zimbra-logo-color.png
-author: zimbra sales engineering 
+author: Sales Engineering 
 abstract: This repository contains a collection of administrative, support, and best practice documention to help partners find the right information.
 ---
 
@@ -22,6 +22,5 @@ This is the set of instructions for Zimbra team members to download, edit and pu
 4. Here is a friendly cheetsheet from [markdown.org](https://www.markdownguide.org/cheat-sheet/) for working with Markdown files.  
 5. When done saving your work perform the following CLI commands from within the local repo: 
     a. `git add -a` to add all edited files associated with the repo. If you wish to ignore any files just add the name to the .ignore file. 
-    b. `git commit -m "TYPE REASON FOR UPDATE"` write one sentance that describes the change. 
+    b. `git commit -m "TYPE REASON FOR UPDATE"` write one sentance that describes the change.
     c. `git push` Check the site to ensure the updates took. eg. `git commit -m "updating typo in readme.md"`
-
