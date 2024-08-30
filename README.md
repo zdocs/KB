@@ -1,6 +1,5 @@
 ---
 title: Zimbra Knowledge Base
-title-block-banner: media/zimbra-logo-color.png
 author: Sales Engineering 
 abstract: This repository contains a collection of administrative, support, and best practice documention to help partners find the right information.
 ---
