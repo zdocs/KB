@@ -17,7 +17,7 @@ This is the set of instructions for Zimbra team members to download, edit and pu
 1. Start by making sure you have downloaded and installed the [Github client](https://github.com/apps/desktop) on the your PC or Mac.
 
 2. Open a CLI, CD into or create a folder for this repo and copy/paste the following `git clone https://github.com/zdocs/KB.git`
-3. Using [VSCode](https://code.visualstudio.com/Download), [Asciidoctor](https://asciidoctor.org/) or uyour favorite IDE for editing MarkDown open the repository you just downloaded and start editing or creating files. 
+3. Using [VSCode](https://code.visualstudio.com/Download), [Asciidoctor](https://asciidoctor.org/) or your favorite IDE for editing MarkDown or HTML open the repository you just downloaded and start editing or creating files. 
 4. Add the file in what ever format you like to the corresponding directory. eg. security posts are placed in the folder `/sec`
 5. Update index.html by adding the link and title. You can follow along on how the other links are added or create your own section for other topics or langauges. 
 6. When done saving your work perform the following CLI commands from within the local repo: 
