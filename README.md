@@ -19,8 +19,9 @@ This is the set of instructions for Zimbra team members to download, edit and pu
 
 2. Open a CLI, CD into or create a folder for this repo and copy/paste the following `git clone https://github.com/zdocs/KB.git`
 3. Using [VSCode](https://code.visualstudio.com/Download), [Asciidoctor](https://asciidoctor.org/) or uyour favorite IDE for editing MarkDown open the repository you just downloaded and start editing or creating files. 
-4. Here is a friendly cheetsheet from [markdown.org](https://www.markdownguide.org/cheat-sheet/) for working with Markdown files.  
-5. When done saving your work perform the following CLI commands from within the local repo: 
+4. Add the file in what ever format you like to the corresponding directory. eg. security posts are placed in the folder `/sec`
+5. Update index.html by adding the link and title. You can follow along on how the other links are added or create your own section for other topics or langauges. 
+6. When done saving your work perform the following CLI commands from within the local repo: 
     a. `git add -a` to add all edited files associated with the repo. If you wish to ignore any files just add the name to the .ignore file. 
     b. `git commit -m "TYPE REASON FOR UPDATE"` write one sentance that describes the change.
     c. `git push` Check the site to ensure the updates took. eg. `git commit -m "updating typo in readme.md"`
