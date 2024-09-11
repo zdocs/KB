@@ -1,0 +1,191 @@
+= Quick Start Check
+
+The Zimbra product includes all the necessary components get an email server up and running.
+
+This quick start guide assumes a single server installation - all components will be installed on one server. This document describes the basic pre-req steps needed to start your Zimbra installation in a direct network connected environment. Post installation, you will be able to log on to the Zimbra administration console to manage the domain and provision accounts. 
+
+== Installation Prerequisites
+
+This document assumes that you are starting with a `minimal` Ubuntu 20.0.4 OS! This document also assumes that your domain is `example.com` and your FQDN is `mail.example.com`!
+
+=== Repo
+
+Zimbra uses the package repositories for downloading most of the installation packages. Ensure that your server can reach the repos by performing the following commands:
+
+----
+# apt-get clean
+# apt-get update
+# apt search zimbra
+----
+
+If you see a bunch of packages scroll by, your server is ready to proceed to the next step! If not check your network connections and ensure that you can access either the remote Zimbra repository. Local repository is not in the scope of this document.
+
+[[pkg_dep]]
+=== Package Dependencies
+
+Ensure the following services are not running: `postfix, httpd/apache, sendmail, exim, mysql/mariadb, named, systemd-resolved, ufw`
+
+Install the following packages:
+----
+apt-get install -qq -y apt-utils
+apt-get install -qq -y netcat-openbsd sudo libidn11 libpcre3 libgmp10 libexpat1 libstdc++6 perl libaio1 unzip pax sysstat vim dnsmasq lsb-release net-tools netfilter-persistent dnsutils iptables sed wget rsyslog
+----
+
+NOTE: pax is required for amavisd. In a minimal ubuntu install, many if the utilities are not available
+
+Check if `rsyslog` is running
+----
+# systemctl status rsyslog
+● rsyslog.service - System Logging Service
+     Loaded: loaded (/lib/systemd/system/rsyslog.service; enabled; vendor preset: enabled)
+     Active: active (running)
+----
+
+=== Network Ports
+
+Ensure that your firewall allows access for the following ports. These are ports typically available to mail clients.
+
+[%header,cols="10,20,30,40",stripes=even]
+|===
+|Port|Protocol|Zimbra Service|Description
+|22| ssh| ssh| SSH
+|25| smtp| mta| incoming mail to postfix
+|443| https| proxy - mail client | HTTP over TLS
+|587| smtp| mta| Mail submission over TLS
+|993| imaps| mailbox / proxy| IMAP over TLS
+|995| pop3s| mailbox / proxy| POP3 over TLS
+|9071| https| proxy admin console| HTTP over TLS
+|===    
+
+TIP: It is good to run `iptables -F` before you start so there are no issues with your installation and if you are familiar with forewall, open the specific ports.
+
+=== Other Network Related Checks
+
+To activate the license once the installation is completed, the server will try and connect to `license.zimbra.com`. Run this command to check if the server is reachable.
+
+`curl --write-out '%{http_code}' --silent --output /dev/null https://license.zimbra.com`
+
+If you do not see [red]#200#, the activation will fail. Ensure that your server can reach license.zimbra.com or you will need to proceed with manual activation.
+
+NOTE: A Zimbra license is required in order to create accounts on the Network Edition Zimbra server. Fill this https://www.zimbra.com/connect/forms/?form=trial-license[Zimbra Trial License] form and get a 60-day full-feature trial license.
+
+== Hostname and Date/Time Config
+
+=== Hostname and /etc/hosts
+
+Zimbra requires a proper `/etc/hosts` file and DNS as all communication is via the `FQDN`. Ensure that you have configured your server hostname and FQDN properly. LDAP will fail to start if the hostnanem  
+----
+hostnamectl set-hostname mail.example.com
+----
+
+Check the `/etc/hostname` and this will reflect the hostname configuration you used in teh above command.
+----
+# cat /etc/hostname
+mail.example.com
+----
+
+Incorrect `/etc/hosts` file will halt the installation with the following error!
+
+*ERROR: Installation can not proceed. Please fix your /etc/hosts file*
+
+The installer is particular about the format of the hosts file and if there is anything amiss, you will see the `hosts` file error during your installation. `getent` will do lookups for any type of data configured in `nsswitch.conf` (`/etc/hosts`) and this is the command the installer script is using to check the hostname.
+
+* Make sure your host has a dedicated line to define the `FQDN`.
+* Make sure you specify the `127.0.0.1` line ABOVE any IPv6 configurations.
+
+You should have the localhost similar to the one below. Your Zimbra server name should be replaced with the `mail.example.com` and `mail` fields. The IP address should be the IP address bound to the network interface [`ip addr` or `ifconfig -a` to confirm].
+----
+127.0.0.1	localhost.localdomain	localhost
+127.0.1.1	ubuntu
+10.0.0.1	mail.example.com    mail
+----
+
+The DNS resolution of your Zimbra server should return the internal IP if you are behind a firewall or NAT. To test:
+----
+$ hostname -f
+mail.example.com
+----
+
+=== Timezone
+Check the correct time-zone setting for your region/city and set that appropriately.
+----
+# timedatectl list-timezones | grep London
+Europe/London
+
+# timedatectl set-timezone 'Europe/London'
+# timedatectl set-ntp TRUE
+----
+
+== DNS
+
+In order to send and receive email, the Zimbra MTA must be configured in DNS with both *A* and *MX* records. During the installation process, Zimbra checks to see if you have an MX record correctly configured. If it is not, an error is displayed suggesting that the domain name have an MX record configured in DNS.
+
+If you skip the above DNS checks, you must remove the DNS check configuration (Admin Console>Global Settings>MTA) in the administration console. Enter a relay MTA address to use for external delivery.
+
+=== DNSMASQ
+
+The `dnsmasq` package is already installed as part of the the <<pkg_dep,Package Dependencies>>.
+
+Edit or create a basic /etc/dnsmasq.conf file
+----
+server=8.8.8.8
+server=8.8.4.4
+server=9.9.9.9
+... add any of fav. DNS servers
+listen-address=127.0.0.1
+domain=example.com
+mx-host=example.com,mail.example.com,0
+address=/mail.example.com/10.0.0.1
+----
+
+Edit the `/etc/resolv.conf` file to have the [red]#A# and [red]#MX# host resolve through `dnsmasq`; i.e, set your localhost (127.0.0.1) as your name server.
+----
+search example.com
+nameserver 127.0.0.1
+----
+
+Restart `dnsmasq` to have the settings take effect - `/etc/init.d/dnsmasq restart`
+
+NOTE: Comments mentioned in this sections are for the single server installation. For multi-server, the A/MX record should be pointing to the MTA (inbound) server.
+
+== (Optional) Lets Encrypt
+
+The packages for `Let's Encrypt` are already mentioned as part of the the <<pkg_dep,Package Dependencies>>. Ensure that you have a CAA record for your domain. This helps with the actual certificate generation. Ensure that your domain has the correct [red]#A# record.
+----
+# dig +short @8.8.4.4 $(hostname)
+public_ip of your server
+
+# dig +short type257 $(hostname --d)
+0 issue "letsencrypt.org"
+----
+
+NOTE: Let's Encrypt `certbot` uses port 80 to check and issue a certificate. Make sure your firewall port is open.
+
+== Misc. Config
+=== Locale
+
+----
+apt install -qq -y locales
+locale-gen "en_US.UTF-8"
+update-locale LC_ALL="en_US.UTF-8"
+----
+
+== Auto Installer
+
+For your convenience, you can use the `zinstaller` script for an completely automated installation of Zimbra on a minimal `Ubuntu 20` system. All the pre-requisites mentioned in this document is being used in this script. The `zinstaller` script will install a Zimbra 9 (single server) on Ubuntu 20 and will also obtain and install a 60-day trial license along with a commercial `Lets Encrypt` certificate if you chose to do so.
+
+NOTE: This is not meant for Production use!
+
+=== Running the script
+
+If your mail server is reachable under `https://mail.example.com` and you want your email addresses to look like info@example.com, you can run `zinstaller` as follows:
+
+[source,bash]
+----
+# wget https://raw.githubusercontent.com/Zimbra/zinstaller/master/zinstaller -O /tmp/zinstaller
+# chmod +x /tmp/zinstaller
+(as root user)
+# /tmp/zinstaller -p put-a-password-here -n mail -t 'Europe/London' --letsencrypt y example.com
+----
+
+More information about `zinstaller` - https://blog.zimbra.com/2022/06/automated-installation-of-zimbra/
