@@ -5,10 +5,10 @@ abstract: This repository contains a collection of administrative, support, and 
 ---
 
 ## Table of Contents
-- [Authentication](auth/auth.md)
-- [Official Zimbra Documentation](officialzimbra/docs.md)
-- [ActiveSync Topics](async/topics.md)
-- [Zimbra Security](sec/security.md)
+- [Authentication](auth/)
+- [Official Zimbra Documentation](officialzimbra/)
+- [ActiveSync Topics](async/)
+- [Zimbra Security](sec/)
 - [Posting Schedule](https://github.com)
 
 ## Getting started
