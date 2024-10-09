@@ -1,8 +1,8 @@
 /* Apply background to the entire body */
 body {
-    background-color: #f0f0f0; /* Light grey background color */
-    background-image: url('media/zimbackround.png'); /* Path to your background image */
-    background-size: cover; /* Cover the entire page */
+    background-color: #69a5ff; /* Light grey background color */
+    /* background-image: url('media/zimbackround.png'); /* Path to your background image */
+    background-size: cover; /*Cover the entire page */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-attachment: fixed; /* Fixed background */
 }
