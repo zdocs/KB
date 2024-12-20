@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-us">
 <head>
   <title>Zimbra Daffodil Documentation (v10)</title>
   <link href="styles.css" type="text/css" rel="stylesheet">
@@ -25,11 +25,11 @@
         families: ['Roboto']
       }
     });
-    function htmldiff(thatVer, thisVer) {
+    function openHtmlDiff(thatVer, thisVer) {
       let svcURL = "https://services.w3.org/htmldiff";
-      let docURL = "https://zimbra.github.io/liberty-docs/index.html";
-      window.open(docURL, '_blank');
-    };
+      let documentationUrl = "https://zimbra.github.io/liberty-docs/index.html";
+      window.open(documentationUrl, '_blank');
+    }
   </script>
 </head>
 
@@ -37,8 +37,11 @@
   <header>
     <div class="logo">
       <a class="logo-link" href="https://www.zimbra.com">
-        <img src="media/zimbra-logo-white.png" width="282" height="62"
-          alt="Secure and Open Unified Collaboration Platform">
+        <img src="media/zimbra-logo-white.png" 
+             srcset="media/zimbra-logo-white-200.png 200w, media/zimbra-logo-white-400.png 400w, media/zimbra-logo-white.png 800w"
+             sizes="(max-width: 600px) 200px, (max-width: 1200px) 400px, 800px"
+             width="282" height="62"
+             alt="Secure and Open Unified Collaboration Platform">
       </a>
     </div>
     <div class="header-bottom">&nbsp;</div>
@@ -77,10 +80,11 @@
         <div class="versionset">
           <h2>Security Best Practices</h2>
           <ul>
-              <li><a href="/sec">Authentication Topics</a></li>
-              <li><a href="sec/SecOps tips for Zimbra.pdf">Install OS and Security updates as they are released</a></li>
-              <li><a href="sec/Installing a Lets Encrypt SSL Certificate.pdf">Installing a Let's Encrypt SSL Certifcate</a></li>
-              <li><a href="sec/Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS.pdf">Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS</a></li>
+            <li><a href="sec/Installing a Lets Encrypt SSL Certificate.pdf">Installing a Let's Encrypt SSL Certificate</a></li>
+            <li><a href="/sec">Authentication Topics</a></li>
+            <li><a href="sec/SecOps tips for Zimbra.pdf">Install OS and Security updates as they are released</a></li>
+            <li><a href="sec/Installing a Lets Encrypt SSL Certificate.pdf">Installing a Let's Encrypt SSL Certifcate</a></li>
+            <li><a href="sec/Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS.pdf">Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS</a></li>
           </ul>
         </div>
         <div class="versionset">
