@@ -5,11 +5,12 @@ abstract: This repository contains a collection of administrative, support, and 
 ---
 
 ## Table of Contents
-- [Authentication](auth/)
-- [Official Zimbra Documentation](officialzimbra/)
+- [Documentation In Spanish](es-docs/)
+- [Documentation In Japanese](ja-docs/)
 - [ActiveSync Topics](async/)
 - [Zimbra Security](sec/)
 - [Posting Schedule](https://github.com)
+- [Notes From The Field](nftf/)
 
 ## Getting started
 This is the set of instructions for Zimbra team members to download, edit and publish documents to the ZDOCs repository.
