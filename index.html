@@ -2,58 +2,297 @@
 <html lang="en-us">
 <head>
   <title>Zimbra Daffodil Documentation (v10)</title>
-  <link href="styles.css" type="text/css" rel="stylesheet">
-  <style>
-    .flex-container {
-      display: flex;
-      justify-content: space-between;
-    }
-    .versionset {
-      flex: 1;
-      margin: 0 10px;
-    }
-  </style>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Official documentation for Zimbra Daffodil (v10) Release, including administrator and end-user guides">
   <link rel="canonical" href="https://zdocs.github.io/KB/">
   <link rel='shortcut icon' type='image/x-icon' href='./images/favicon.ico' />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
   <script>
     WebFont.load({
       google: {
-        families: ['Roboto']
+        families: ['Roboto:300,400,500,700']
       }
     });
+    
     function openHtmlDiff(thatVer, thisVer) {
       let svcURL = "https://services.w3.org/htmldiff";
       let documentationUrl = "https://zimbra.github.io/liberty-docs/index.html";
       window.open(documentationUrl, '_blank');
     }
+
+    // Add search functionality
+    function searchDocs() {
+      const input = document.getElementById('search-input').value.toLowerCase();
+      const docItems = document.querySelectorAll('.doclist li');
+      
+      docItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(input)) {
+          item.style.display = 'list-item';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Add dark mode toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const mode = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+      localStorage.setItem('preferred-theme', mode);
+    }
+
+    // Check for saved user preference
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('preferred-theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+      }
+    });
   </script>
+  <style>
+    :root {
+      --primary-color: #0073b7;
+      --secondary-color: #f8f9fa;
+      --text-color: #333;
+      --bg-color: #fff;
+      --border-color: #e0e0e0;
+      --hover-color: #f5f5f5;
+      --header-color: #333;
+    }
+
+    body.dark-mode {
+      --primary-color: #2196f3;
+      --secondary-color: #2d2d2d;
+      --text-color: #f0f0f0;
+      --bg-color: #1a1a1a;
+      --border-color: #444;
+      --hover-color: #2c2c2c;
+      --header-color: #eee;
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+    }
+
+    header {
+      background-color: var(--primary-color);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      padding: 0.5rem 0;
+    }
+
+    .logo img {
+      max-height: 50px;
+      width: auto;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .dark-mode-toggle {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .title-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .title-header h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-container {
+      margin: 1.5rem auto;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .versionset {
+      flex: 1;
+      min-width: 250px;
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .versionset h2 {
+      font-size: 1.25rem;
+      color: var(--primary-color);
+      margin-top: 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .versionset ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .versionset li {
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+    }
+
+    .versionset li:hover {
+      background-color: var(--hover-color);
+    }
+
+    .versionset a {
+      color: var(--text-color);
+      text-decoration: none;
+      display: block;
+      padding: 0.25rem 0;
+    }
+
+    .versionset a:hover {
+      color: var(--primary-color);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      margin-top: 2rem;
+      background-color: var(--secondary-color);
+      border-top: 1px solid var(--border-color);
+    }
+
+    footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    /* Responsive design */
+    @media screen and (max-width: 768px) {
+      .flex-container {
+        flex-direction: column;
+      }
+      
+      .versionset {
+        margin-bottom: 1rem;
+      }
+
+      header {
+        padding: 1rem;
+      }
+      
+      main {
+        padding: 1rem;
+      }
+      
+      .title-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <link href="styles.css" type="text/css" rel="stylesheet">
   <header>
-    <div class="logo">
-      <a class="logo-link" href="https://www.zimbra.com">
-        <img src="media/zimbra-logo-white.png" 
-             srcset="media/zimbra-logo-white-200.png 200w, media/zimbra-logo-white-400.png 400w, media/zimbra-logo-white.png 800w"
-             sizes="(max-width: 600px) 200px, (max-width: 1200px) 400px, 800px"
-             width="282" height="62"
-             alt="Secure and Open Unified Collaboration Platform">
-      </a>
+    <div class="navbar">
+      <div class="logo">
+        <a class="logo-link" href="https://www.zimbra.com">
+          <img src="media/zimbra-logo-white.png" 
+              srcset="media/zimbra-logo-white-200.png 200w, media/zimbra-logo-white-400.png 400w, media/zimbra-logo-white.png 800w"
+              sizes="(max-width: 600px) 200px, (max-width: 1200px) 400px, 800px"
+              alt="Zimbra - Secure and Open Unified Collaboration Platform">
+        </a>
+      </div>
+      <div class="nav-actions">
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+          <span class="material-icons">dark_mode</span>
+        </button>
+      </div>
     </div>
-    <div class="header-bottom">&nbsp;</div>
   </header>
+  
   <main>
     <section class="title-header">
       <h1>Zimbra Knowledge Base</h1>
       <div class="content">
         <p>This documentation is intended for administrators and end users of Zimbra Daffodil (v10) Release.</p>
       </div>
+      <div class="search-container">
+        <span class="material-icons search-icon">search</span>
+        <input type="text" id="search-input" placeholder="Search documentation..." onkeyup="searchDocs()">
+      </div>
     </section>
+    
     <section class="doclist">
       <div class="flex-container">
         <div class="versionset">
@@ -83,6 +322,7 @@
           </ul>
         </div>
       </div>
+      
       <div class="flex-container">
         <div class="versionset">
           <h2>Security Best Practices</h2>
@@ -90,15 +330,14 @@
             <li><a href="sec/Installing a Lets Encrypt SSL Certificate.pdf">Installing a Let's Encrypt SSL Certificate</a></li>
             <li><a href="/sec">Authentication Topics</a></li>
             <li><a href="sec/SecOps tips for Zimbra.pdf">Install OS and Security updates as they are released</a></li>
-            <li><a href="sec/Installing a Lets Encrypt SSL Certificate.pdf">Installing a Let's Encrypt SSL Certifcate</a></li>
             <li><a href="sec/Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS.pdf">Multiple SSL Certificates, Server Name Indication (SNI) for HTTPS</a></li>
           </ul>
         </div>
         <div class="versionset">
-            <h2>Documentación en Español</h2>
+          <h2>Documentación en Español</h2>
           <ul>
             <li><a href="es-docs/Configuraci%C3%B3n-de-Zimbra-10.0.x-en-chat.pdf">Configuración de Chat y Vídeo Zimbra 10.x</a></li>
-            <li><a href="es-docs/Customizing Zimbra Modern UI Labels - Spanish.pdf">Personalización de la interfaz de usuario moderna de Zimbra </a></li>
+            <li><a href="es-docs/Customizing Zimbra Modern UI Labels - Spanish.pdf">Personalización de la interfaz de usuario moderna de Zimbra</a></li>
             <li><a href="es-docs/Proceso de copia de seguridad completo.pdf">Proceso de copia de seguridad completo</a></li>
           </ul>
         </div>
@@ -108,14 +347,12 @@
             <li><a href="ja-docs/2FA_%E8%A8%AD%E5%AE%9A%E5%8F%82%E8%80%83%E8%B3%87%E6%96%99_001.pdf">2FA_設定参考資料_001.pdf</a></li>
           </ul>
         </div>
-
       </div>
     </section>
   </main>
-  <br>
+  
   <footer>
-    
-Copyright © 2005 - 2024 <a href ="https://www.zimbra.com"> Zimbra, Inc.</a> All rights reserved.
+    <p>Copyright © 2005 - 2025 <a href="https://www.zimbra.com">Zimbra, Inc.</a> All rights reserved.</p>
   </footer>
 </body>
 </html>
