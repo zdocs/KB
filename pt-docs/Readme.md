@@ -1,0 +1,1 @@
+These are Zimbra KB Articles in Portuguese.
