@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copias de Seguridad y Recuperación de Datos para Zimbra Network Edition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        .introduction {
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        ol {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .note {
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 10px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        ul.command-list {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        ul.command-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        ul.command-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <h1>Copias de Seguridad y Recuperación de Datos para Zimbra Network Edition</h1>
+
+    <div class="introduction">
+        <p>¿Por qué son tan importantes las copias de seguridad y la recuperación de datos?</p>
+        <p>No le molestaremos una y otra vez con largos razonamientos sobre cómo los datos se han convertido en el oro del siglo actual. Vayamos directamente a un caso práctico. ¿Qué pasaría si mañana por la mañana se despierta y descubre que ha perdido 8 horas de trabajo de todos sus empleados? Intentemos calcular el daño, al menos el económico. Luego, habrá tiempo para pensar en daños colaterales, como la frustración de los empleados.</p>
+        <p>Con Zimbra Network Edition no existe la posibilidad de perder datos, ya que nuestra copia de seguridad es segura y constante. Simplemente nunca deja de funcionar. ¿Listo para proteger su plataforma Zimbra? ¡Sigamos adelante!</p>
+        
+        <p>Lea este documento técnico si...</p>
+        <ul>
+            <li>Tiene problemas con las copias de seguridad de datos</li>
+            <li>Cree que su sistema actual de copias de seguridad no es fiable / No tiene uno</li>
+            <li>Necesita cumplir con las regulaciones de privacidad</li>
+        </ul>
+    </div>
+
+    <h2>Proceso de copia de seguridad completo</h2>
+    
+    <p>El proceso de copia de seguridad completo sigue siguientes pasos para realizar una copia de
+    seguridad del buzón, la base de datos, los índices y el directorio LDAP:</p>
+    
+    <ol>
+        <li>Realiza una copia de seguridad de los datos del sistema global, incluidas las tablas
+        del sistema y localconfig.xml.</li>
+        <li>Recorre en iteración cada cuenta de la que se va a hacer una copia de seguridad y
+        realiza una copia de seguridad de las entradas LDAP de esas cuentas.</li>
+        <li>Coloca el buzón de la cuenta en modo de mantenimiento para bloquear
+        temporalmente la entrega de correo y el acceso de los usuarios a ese buzón.</li>
+        <li>Realiza una copia de seguridad del buzón.
+            <ol type="a">
+                <li>Crea un vertedero de MariaDB para todos los datos relacionados con
+                ese buzón.</li>
+                <li>Realiza una copia de seguridad del directorio de mensajes de ese
+                buzón.</li>
+                <li>Crea una copia de seguridad del directorio de índice de ese buzón.</li>
+            </ol>
+        </li>
+        <li>Reactiva el buzón y pasa al siguiente.</li>
+        <li>Realiza una copia de seguridad del directorio LDAP.</li>
+    </ol>
+    
+    <p>Por lo general, una copia de seguridad completa se ejecuta de forma asíncrona. Cuando
+    comienza la copia de seguridad completa, la etiqueta del proceso de copia de seguridad en
+    curso se muestra inmediatamente. La copia de seguridad continúa en segundo plano. Puede
+    utilizar el comando <code>zmbackupquery</code> para comprobar el estado de la copia de seguridad en
+    ejecución en cualquier momento.</p>
+    
+    <p>Los archivos de copia de seguridad se guardan como archivos zip sin compresión. Para
+    cambiar la opción zip predeterminada, consulte el Apéndice A: Utilidades de línea de
+    comandos, sección zmbackup.</p>
+    
+    <h2>Proceso de copia de seguridad incremental</h2>
+    
+    <p>Las copias de seguridad incrementales se ejecutan mediante el comando de la CLI,
+    <code>zmbackup</code>. El proceso para la copia de seguridad incremental es el siguiente:</p>
+    
+    <ol>
+        <li>Realiza una copia de seguridad de los datos del sistema global, incluidas las tablas
+        del sistema y localconfig.xml.</li>
+        <li>Recorre en iteración cada cuenta de la que se va a hacer una copia de seguridad y
+        realiza una copia de seguridad de las entradas LDAP de esas cuentas.</li>
+        <li>Mueve los registros de puesta (redo logs) al día de archivo, creados desde la
+        última copia de seguridad, a la carpeta <code>&lt;backup_target&gt;/redologs</code>.</li>
+    </ol>
+    
+    <div class="note">
+        <p>Los registros archivados que tienen menos de una hora de antigüedad en el
+        momento de la copia de seguridad incremental se copian en la copia de seguridad
+        y no se eliminan. Estos redologs se eliminan una hora después de la copia de
+        seguridad. El intervalo se establece mediante la clave localconfig
+        <code>backup_archived_redolog_keep_time</code>. El valor predeterminado es 3600
+        segundos.</p>
+        
+        <p>Si no se encuentra ninguna copia de seguridad completa para esta cuenta, el
+        proceso de copia de seguridad realiza una copia de seguridad completa en esta
+        cuenta, incluso si solo se especificó una copia de seguridad incremental.</p>
+    </div>
+    
+    <ol start="4">
+        <li>Realiza una copia de seguridad del directorio LDAP.</li>
+    </ol>
+    
+    <h2>Realización de copias de seguridad manuales</h2>
+    
+    <p>Utilice el mandato <code>zmbackup</code> para realizar las siguientes operaciones de copia de seguridad:</p>
+    
+    <ul class="command-list">
+        <li>Realice una copia de seguridad manual de todos los buzones de correo en el
+        servidor&lt;1&gt;:<br>
+        <code>zmbackup -f -s server1.domain.com -a all</code></li>
+        
+        <li>Realizar una copia de seguridad manual e incremental de todos los buzones de
+        correo del servidor1 desde la última copia de seguridad completa<br>
+        <code>zmbackup -i -s server1.domain.com -a all</code></li>
+        
+        <li>Realice una copia de seguridad manual y completa solo del buzón de correo del
+        usuario1 en el servidor1<br>
+        <code>zmbackup -f -s server1.domain.com -a user1@domain.com</code></li>
+    </ul>
+    
+    <h2>Eliminación de sesiones de copia de seguridad</h2>
+    
+    <p>Puede eliminar sesiones de copia de seguridad por etiqueta o por fecha.</p>
+    
+    <ul>
+        <li>Al eliminar por etiqueta, se elimina esa sesión y todas las sesiones de copia de
+        seguridad anteriores a esa sesión.</li>
+        <li>Al eliminar por fecha, se eliminan todas las sesiones de copia de seguridad
+        anteriores a la fecha especificada.</li>
+    </ul>
+    
+    <p>Por ejemplo, <code>zmbackup -del 7d</code> elimina las copias de seguridad de más de 7 días a partir
+    de ahora. Puede especificar el día (d), el mes (m) o el año (y).</p>
+    
+    <h2>Encontrar copias de seguridad específicas</h2>
+    
+    <p>Cada copia de seguridad completa o incremental es una sesión de copia de seguridad.
+    Cada sesión de copia de seguridad está etiquetada con fecha y hora. Por ejemplo, la etiqueta
+    <code>full-20210712.155951.123</code> dice que se trata de una copia de seguridad del 12 de julio
+    de 2021 a las 3:59:51.123.</p>
+    
+    <p>Las horas establecidas en la etiqueta de la sesión son GMT, no la hora local. GMT se utiliza para facilitar el
+    orden visual en las transiciones de horario de verano.</p>
+    
+    <p>Utilice el comando <code>zmbackupquery</code> para buscar sesiones de copia de seguridad
+    completas.</p>
+    
+    <ul class="command-list">
+        <li>Para encontrar una sesión de copia de seguridad completa específica:<br>
+        <code>zmbackupquery -lb full-20210712.155951.123</code></li>
+        
+        <li>Para encontrar una sesión de copia de seguridad completa desde una fecha
+        específica:<br>
+        <code>zmbackupquery --type full --from "2021/01/01 12:45:45"</code></li>
+        
+        <li>Para encontrar todas las sesiones de copia de seguridad completas en el directorio
+        de copia de seguridad:<br>
+        <code>zmbackupquery --type full</code></li>
+        
+        <li>Para encontrar el mejor punto en el tiempo para restaurar una cuenta, especifique
+        una ventana de tiempo<br>
+        <code>zmbackupquery -a user1@example.com --type full --from "2021/07/05
+        12:01:15" --to "2021/07/12 17:01:45"</code></li>
+    </ul>
+</body>
+</html>
